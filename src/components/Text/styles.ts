@@ -8,7 +8,7 @@ export const TextComponent = styled.Text<textProps>`
         fontSize === 'sm' 
         ? theme.fonts.size.sm
         : theme.fonts.size.md
-    };
+    }px;
     font-family: ${({ theme: {fonts}}) => fonts.family.Roboto.Regular };
     color: ${({theme:{colors}}) => colors.gray['200']};
 `

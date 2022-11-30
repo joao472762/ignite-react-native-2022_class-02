@@ -8,7 +8,7 @@ export const HeadingComponent = styled.Text<HeadingProps>`
         fontSize === 'lg' 
         ? theme.fonts.size.lg
         : theme.fonts.size.xl
-    };
+    }px;
     color: ${({theme:{colors}}) => colors.gray['100']};
     font-family: ${({ theme: {fonts}}) => fonts.family.Roboto.Bold };
    

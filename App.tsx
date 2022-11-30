@@ -1,16 +1,19 @@
-import { Group } from '@screens/Group';
 import { StatusBar } from 'expo-status-bar';
-import { AppContainer } from './src/styles/app';
-import { defaultTheme } from './src/styles/theme';
 import { ThemeProvider } from 'styled-components/native';
 import {Roboto_400Regular,Roboto_700Bold, useFonts} from '@expo-google-fonts/roboto'
+
+import { Group } from '@screens/Group';
 import { Loader } from '@components/Loader';
 
+import { AppContainer } from './src/styles/app';
+import { defaultTheme } from './src/styles/theme';
+
 export default function App() {
-  const [fontLoaded] = useFonts({
+  const [fontsLoaded] = useFonts({
     Roboto_400Regular,
     Roboto_700Bold,
-  }) 
+  })
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <AppContainer>
@@ -19,7 +22,7 @@ export default function App() {
           style='light'
           backgroundColor='transparent'
         />
-        {!fontLoaded ? <Group/> : <Loader/>}
+        {fontsLoaded ? <Group/> : <Loader/>}
      
       </AppContainer>
      
