@@ -1,14 +1,17 @@
-import styled from "styled-components/native";
+import styled, {css} from "styled-components/native";
 
 interface textProps {
     fontSize: 'sm' | 'md'
 }
 export const TextComponent = styled.Text<textProps>`
-    font-size: ${ ({theme,fontSize}) => 
-        fontSize === 'sm' 
-        ? theme.fonts.size.sm
-        : theme.fonts.size.md
-    }px;
-    font-family: ${({ theme: {fonts}}) => fonts.family.Roboto.Regular };
-    color: ${({theme:{colors}}) => colors.gray['200']};
+    ${({fontSize, theme: {colors, fonts}}) => css`
+        font-size: ${
+            fontSize === 'sm' 
+            ? fonts.size.sm
+            : fonts.size.md
+        }px;
+        font-family: ${fonts.family.Roboto.Regular };
+        color: ${colors.gray['200']};
+    
+    `}
 `

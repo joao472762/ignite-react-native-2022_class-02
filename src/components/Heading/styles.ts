@@ -1,15 +1,18 @@
-import styled from "styled-components/native";
+import styled, {css} from "styled-components/native";
 
 interface HeadingProps {
     fontSize: 'lg' | 'xl'
 }
 export const HeadingComponent = styled.Text<HeadingProps>`
-    font-size: ${ ({theme,fontSize}) => 
-        fontSize === 'lg' 
-        ? theme.fonts.size.lg
-        : theme.fonts.size.xl
-    }px;
-    color: ${({theme:{colors}}) => colors.gray['100']};
-    font-family: ${({ theme: {fonts}}) => fonts.family.Roboto.Bold };
+    ${({fontSize,theme: {colors,fonts,}}) => css`
+        font-size: ${ 
+            fontSize === 'lg' 
+            ? fonts.size.lg
+            : fonts.size.xl
+        }px;
+        color: ${colors.gray['100']};
+        font-family: ${ fonts.family.Roboto.Bold };
+    
+    `}
    
 `

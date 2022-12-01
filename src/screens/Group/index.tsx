@@ -1,14 +1,14 @@
-import {Text} from '@components/Text'
-    import { GroupContainer ,Footer} from "./styles";
-import { Heading } from "@components/Heading";
+import { useState } from 'react';
+import { FlatList } from 'react-native';
+
+
+import { Button } from '@components/Button';
 import { Header } from '@components/Header';
 import { HighLight } from '@components/HighLight';
 import { GroupCard } from '@components/GroupCard';
-import { Button } from '@components/Button';
-import { FlatList } from 'react-native';
-import { useState } from 'react';
 import { ListEmpty } from '@components/ListEmpty';
 
+import { GroupContainer ,Footer} from "./styles";
 
 export function Group(){
     const [groups, setGroups] = useState([])

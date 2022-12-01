@@ -10,3 +10,4 @@ export  const LoaderIndicator = styled.ActivityIndicator.attrs(( {theme}) => ({
     size: 'large'
 }))``
 
+    
