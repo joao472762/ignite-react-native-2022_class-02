@@ -1,5 +1,5 @@
-import {GoBackButton, HeaderContainer, Icon,Logo} from './styles'
 import logoImage from '@assets/logo.png'
+import {GoBackButton, HeaderContainer, Icon,Logo} from './styles'
 
 interface HederProps {
     hasLeftIndicator?: boolean

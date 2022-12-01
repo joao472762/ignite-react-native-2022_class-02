@@ -1,8 +1,8 @@
 import {ReactNode} from 'react'
-import { TextInputProps,TouchableOpacityProps } from 'react-native'
 import { useTheme } from 'styled-components/native'
+import { TextInputProps,TouchableOpacityProps } from 'react-native'
 
-import {InputRootContainer,InputInputContainer,PlusButtonContainer, Icon} from './styles'
+import {InputRootContainer,InputInputContainer,PlusButtonContainer} from './styles'
 
 interface InputRootProps {
     children: ReactNode
