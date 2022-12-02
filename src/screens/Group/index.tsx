@@ -1,22 +1,26 @@
-import { useState } from 'react';
 import { FlatList } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack'
 
 
 import { Button } from '@components/Button';
 import { Header } from '@components/Header';
+import { useGroup } from '@hooks/useGrups';
 import { HighLight } from '@components/HighLight';
 import { GroupCard } from '@components/GroupCard';
 import { ListEmpty } from '@components/ListEmpty';
-
-import { GroupContainer ,Footer} from "./styles";
 import { StackScreensProps } from '@routes/stack.routes';
 
-export function Group({navigation}:NativeStackScreenProps<StackScreensProps,'Group'>){
-    const [groups, setGroups] = useState([])
+import { GroupContainer ,Footer} from "./styles";
+
+export function Group({navigation:{navigate}}:NativeStackScreenProps<StackScreensProps,'Group'>){
+    const {groups} = useGroup()
 
     function navigateToNewGroupScreen(){
-        navigation.navigate('NewGroup')
+        navigate('NewGroup')
+    }
+
+    function navigateToPlayersScreen(id: string){
+        navigate('Players',{id})
     }
 
     return (
@@ -29,13 +33,16 @@ export function Group({navigation}:NativeStackScreenProps<StackScreensProps,'Gro
          
             <FlatList
                 data={groups}
-                keyExtractor={item => String(item)}
+                keyExtractor={item => item.id}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
                 style={{marginBottom: 20}}
                 
                 renderItem={({item}) => (
-                    <GroupCard title={String(item)}/>
+                    <GroupCard 
+                        title={item.name}
+                        onPress={() => navigateToPlayersScreen(item.id)}
+                    />
                 )}
                 contentContainerStyle={!groups.length && {
                     flex: 1

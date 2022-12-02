@@ -1,7 +1,9 @@
-import { Heading } from "@components/Heading";
 import styled from "styled-components/native";
-import { Plus, X } from "phosphor-react-native";
+import { Plus } from "phosphor-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+import { Heading } from "@components/Heading";
+import {Text as TextComponent} from '@components/Text'
 
 interface TeamSelectorProps {
     hasBorder?: boolean;
@@ -46,11 +48,17 @@ export const Text = styled(Heading)`
     font-size:  ${( {theme: {fonts}}) => fonts.size.sm}px;
 `
 
+export const ErrorMessage = styled(TextComponent)`
+    color: ${( {theme: {colors}}) => colors.danger[700]};
+    margin-top: 8px;
+`
+
 export const Icon = styled(Plus).attrs(({theme}) => ({
     size: 32,
     color: theme.colors.green[700]
     
 }))``
+
 
 
 

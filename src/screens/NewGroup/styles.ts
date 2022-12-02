@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import {UsersThree,Plus} from 'phosphor-react-native'
+import {UsersThree} from 'phosphor-react-native'
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export const NewGroupContainer = styled(SafeAreaView)`

@@ -1,13 +1,16 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
+
 import { Group } from '@screens/Group'
-import { NewGroup } from '@screens/NewGroup'
 import { Players } from '@screens/Players'
+import { NewGroup } from '@screens/NewGroup'
 
 
 export type StackScreensProps = {
     Group: undefined,
     NewGroup: undefined,
-    Players: undefined,
+    Players: {
+        id: string,
+    },
 }
 const {Navigator, Screen} = createNativeStackNavigator<StackScreensProps>()
 

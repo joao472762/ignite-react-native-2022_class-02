@@ -4,13 +4,13 @@ import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import {NativeStackScreenProps} from '@react-navigation/native-stack'
 
 import { Input } from "@components/Input";
+import { useGroup } from "@hooks/useGrups";
 import { Button } from "@components/Button";
 import { Header } from "@components/Header";
 import { HighLight } from "@components/HighLight";
+import { StackScreensProps } from "@routes/stack.routes";
 
 import {NewGroupContainer, NewGroupContent, Icon}  from './styles'
-import { StackScreensProps } from "@routes/stack.routes";
-import { useGroup } from "@hooks/useGrups";
 
 
 interface participant {
@@ -40,8 +40,8 @@ export function NewGroup({navigation}:NativeStackScreenProps<StackScreensProps,'
         navigation.goBack()
     }
 
-    function navigateToPlayersScreen(){
-        navigation.navigate('Players')
+    function navigateToPlayersScreen(id: string){
+        navigation.navigate('Players',{id})
     }
 
     function handleUpdateGroupName(groupName: string){
@@ -52,10 +52,11 @@ export function NewGroup({navigation}:NativeStackScreenProps<StackScreensProps,'
         if(!groupName.trim().length){
             return
         }
-        createNewGroup(groupName)
+        const groupId = createNewGroup(groupName)
         setGroupName('')
         
-        navigateToPlayersScreen()
+        navigateToPlayersScreen(groupId)
+
     }
 
     
