@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FlatList } from 'react-native';
+import {NativeStackScreenProps} from '@react-navigation/native-stack'
 
 
 import { Button } from '@components/Button';
@@ -9,10 +10,15 @@ import { GroupCard } from '@components/GroupCard';
 import { ListEmpty } from '@components/ListEmpty';
 
 import { GroupContainer ,Footer} from "./styles";
+import { StackScreensProps } from '@routes/stack.routes';
 
-export function Group(){
+export function Group({navigation}:NativeStackScreenProps<StackScreensProps,'Group'>){
     const [groups, setGroups] = useState([])
-   
+
+    function navigateToNewGroupScreen(){
+        navigation.navigate('NewGroup')
+    }
+
     return (
         <GroupContainer>
             <Header/>
@@ -45,7 +51,10 @@ export function Group(){
             
            
             <Footer>
-                <Button title='Criar nova turma'/>
+                <Button 
+                    onPress={navigateToNewGroupScreen}
+                    title='Criar nova turma'
+                />
 
             </Footer>
         </GroupContainer>

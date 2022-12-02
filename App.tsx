@@ -2,13 +2,11 @@ import { StatusBar } from 'expo-status-bar';
 import { ThemeProvider } from 'styled-components/native';
 import {Roboto_400Regular,Roboto_700Bold, useFonts} from '@expo-google-fonts/roboto'
 
-import { Group } from '@screens/Group';
 import { Loader } from '@components/Loader';
 
 import { AppContainer } from './src/styles/app';
 import { defaultTheme } from './src/styles/theme';
-import { NewGroup } from '@screens/NewGroup';
-import { Players } from '@screens/Players';
+import { Router } from '@routes/index';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -24,7 +22,7 @@ export default function App() {
           style='light'
           backgroundColor='transparent'
         />
-        {fontsLoaded ? <Players/> : <Loader/>}
+        {fontsLoaded ? <Router/> : <Loader/>}
      
       </AppContainer>
      

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FlatList } from 'react-native'
+import {NativeStackScreenProps} from '@react-navigation/native-stack'
 
 import { Input } from '@components/Input'
 import { Header } from '@components/Header'
@@ -15,18 +16,24 @@ import {
     PlayersContent,
     PlayersContainer,
 } from './styles'
+import { StackScreensProps } from '@routes/stack.routes'
 
 type teamSelectedProps = 'firstTeam'|'secondTeam'
-export function Players(){
+export function Players({navigation}:NativeStackScreenProps<StackScreensProps,'Players'>){
     const [teamSelected, setTeamSelected] = useState<teamSelectedProps>('firstTeam')
 
     function handleSelectTeam(team: teamSelectedProps){
         setTeamSelected(team)
     }
+
+    function navigateToPreviousScreen(){
+        navigation.goBack()
+    }
     return (
         <PlayersContainer>
             <Header
                 hasLeftIndicator
+                navigateToPreviousScreen={navigateToPreviousScreen}
             />
             <PlayersContent>
                 <HighLight
