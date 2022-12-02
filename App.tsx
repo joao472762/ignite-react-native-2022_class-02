@@ -7,7 +7,7 @@ import { Loader } from '@components/Loader';
 import { AppContainer } from './src/styles/app';
 import { defaultTheme } from './src/styles/theme';
 import { Router } from '@routes/index';
-
+import {GroupContextProvider} from '@context/GroupContext'
 export default function App() {
   const [fontsLoaded] = useFonts({
     Roboto_400Regular,
@@ -22,7 +22,10 @@ export default function App() {
           style='light'
           backgroundColor='transparent'
         />
-        {fontsLoaded ? <Router/> : <Loader/>}
+
+        <GroupContextProvider>
+          {fontsLoaded ? <Router/> : <Loader/>}
+        </GroupContextProvider>
      
       </AppContainer>
      
