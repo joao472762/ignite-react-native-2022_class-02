@@ -13,13 +13,13 @@ import {
     TeamsNames,
     TeamsHeader, 
     TeamSelector,
-    ErrorMessage,
     PlayersContent,
     PlayersContainer,
 } from './styles'
 import { StackScreensProps } from '@routes/stack.routes'
 import { useGroup } from '@hooks/useGrups'
 import { teamType } from '@context/GroupContext'
+import { ErrorMessage } from '@components/ErrorMessage'
 
 
 export function Players({navigation,route}:NativeStackScreenProps<StackScreensProps,'Players'>){
@@ -86,7 +86,7 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
                 </Input.Root>
                 {
                     showError &&
-                    <ErrorMessage>nome não pode ficar vazio</ErrorMessage>
+                    <ErrorMessage error='nome não pode ficar vazio'/>
                 }
              
 
@@ -113,7 +113,12 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
                     data={team!?.participants}
                     keyExtractor = {item => item.id}
                     renderItem = {({item}) => (
-                        <PlayerCard title={item.name}/>
+                        <PlayerCard 
+                            title={item.name}
+                            groupId={group!.id}
+                            team={teamSelected}
+                            participantId={item.id}
+                        />
                     )}
                     showsHorizontalScrollIndicator={false}
                 />

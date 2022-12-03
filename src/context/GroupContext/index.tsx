@@ -28,6 +28,7 @@ interface GroupContextProviderProps {
 interface GroupContextType  {
     groups: groupProps[],
     createNewGroup: (groupName: string) => string,
+    removeOneParticipant: (groupId: string, team: teamType,participantId: string) => void,
     addNewParticipant: (groupId: string, team: teamType, participantName: string) => void
 }
 
@@ -98,12 +99,55 @@ export function GroupContextProvider({children}: GroupContextProviderProps){
         
     }
 
+    function removeOneParticipant(groupId: string, team: teamType,participantId: string){
+        const groupsUpdated = groups.map(group => {
+            if (group.id === groupId) {
+                if(team === 'firstTeam'){
+                    const partcipantsWithoutOne = group.firstTeam.participants.filter(participant => {
+                        return participant.id !== participantId
+                    })
+                    console.log(partcipantsWithoutOne)
+                    const firstTeamUpdated = {
+                        ...group.firstTeam,
+                        participants: partcipantsWithoutOne
+                    }
+                    const groupUpdated: groupProps = {
+                        ...group,
+                        firstTeam: firstTeamUpdated
+                    }
+
+                    return groupUpdated
+                }
+                else{
+                    const partcipantsWithoutOne = group.secondTeam.participants.filter(participant => {
+                        return participant.id !== participantId
+                    })
+                    const secondTeamUpdated = {
+                        ...group.secondTeam,
+                        participants: partcipantsWithoutOne
+                    }
+                    const groupUpdated: groupProps = {
+                        ...group,
+                        secondTeam: secondTeamUpdated
+                    }
+
+                    return groupUpdated
+                }
+            }
+
+            return group
+        })
+      
+        setGroups(groupsUpdated)
+    }
+
     return (
         <GroupContext.Provider value={
             {
                 groups,
                 createNewGroup,
                 addNewParticipant,
+                removeOneParticipant,
 
             }
         }>

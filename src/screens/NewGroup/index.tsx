@@ -3,6 +3,7 @@ import uuid from 'react-native-uuid';
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import {NativeStackScreenProps} from '@react-navigation/native-stack'
 
+
 import { Input } from "@components/Input";
 import { useGroup } from "@hooks/useGrups";
 import { Button } from "@components/Button";
@@ -11,28 +12,19 @@ import { HighLight } from "@components/HighLight";
 import { StackScreensProps } from "@routes/stack.routes";
 
 import {NewGroupContainer, NewGroupContent, Icon}  from './styles'
+import { ErrorMessage } from "@components/ErrorMessage";
 
 
 interface participant {
     name: string
 }
 
-interface groupProps {
-    id: string,
-    name: string,
-    firstTeam: {
-        id: string,
-        participants: participant[] | []
-    }
-    secondTeam: {
-        id: string,
-        participants: participant[] | []
-    }
-}
+
 
 export function NewGroup({navigation}:NativeStackScreenProps<StackScreensProps,'NewGroup'>){
     const [groupName, setGroupName] = useState('')
-    const {createNewGroup,groups} = useGroup()
+    const {createNewGroup} = useGroup()
+    const [showError, setShowError] = useState(false)
 
 
 
@@ -46,10 +38,12 @@ export function NewGroup({navigation}:NativeStackScreenProps<StackScreensProps,'
 
     function handleUpdateGroupName(groupName: string){
         setGroupName(groupName)
+        setShowError(false)
     }
 
     function handleCreateNewGroup(){
         if(!groupName.trim().length){
+            setShowError(true)
             return
         }
         const groupId = createNewGroup(groupName)
@@ -83,6 +77,11 @@ export function NewGroup({navigation}:NativeStackScreenProps<StackScreensProps,'
                             onChangeText={handleUpdateGroupName}
                         />
                     </Input.Root>
+                    {
+                    showError &&
+                        <ErrorMessage  error='nome não pode ficar vazio'/>
+                    }
+             
                     <Button
                         title="Criar"
                         onPress={handleCreateNewGroup}
