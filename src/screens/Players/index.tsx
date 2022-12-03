@@ -1,10 +1,15 @@
 import { useState } from 'react'
-import { FlatList } from 'react-native'
+import { FlatList, Keyboard, TouchableWithoutFeedback } from 'react-native'
 import {NativeStackScreenProps} from '@react-navigation/native-stack'
 
 import { Input } from '@components/Input'
 import { Header } from '@components/Header'
 import { HighLight } from '@components/HighLight'
+
+import { useGroup } from '@hooks/useGrups'
+import { StackScreensProps } from '@routes/stack.routes'
+import { teamType } from '@reduce/GroupsReducer/action';
+import { ErrorMessage } from '@components/ErrorMessage'
 import { PlayerCard } from '@screens/Players/components/PlayerCard'
 
 import {
@@ -16,10 +21,6 @@ import {
     PlayersContent,
     PlayersContainer,
 } from './styles'
-import { StackScreensProps } from '@routes/stack.routes'
-import { useGroup } from '@hooks/useGrups'
-import { teamType } from '@context/GroupContext'
-import { ErrorMessage } from '@components/ErrorMessage'
 
 
 export function Players({navigation,route}:NativeStackScreenProps<StackScreensProps,'Players'>){
@@ -61,71 +62,74 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
 
     const teamLength = String(team?.participants.length)
     return (
-        <PlayersContainer>
-            <Header
-                hasLeftIndicator
-                navigateToPreviousScreen={navigateToPreviousScreen}
-            />
-            <PlayersContent>
-                <HighLight
-                    title={group!?.name}
-                    subTitle='adicione a galera e separe os times'
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <PlayersContainer>
+                <Header
+                    hasLeftIndicator
+                    navigateToPreviousScreen={navigateToPreviousScreen}
                 />
-
-                <Input.Root>
-                    <Input.Input
-                        value={participantName}
-                        placeholder='Nome do participante'
-                        onChangeText={handleUpdateParticipantName}
+                <PlayersContent>
+                    <HighLight
+                        title={group!?.name}
+                        subTitle='adicione a galera e separe os times'
                     />
-                    <Input.RightButton
-                        onPress={handleAddNewParticipant}
-                    >
-                        <Icon/>
-                    </Input.RightButton>
-                </Input.Root>
-                {
-                    showError &&
-                    <ErrorMessage error='nome não pode ficar vazio'/>
-                }
-             
 
-                <TeamsHeader>
-                    <TeamsNames>
-                        <TeamSelector 
-                            hasBorder={teamSelected === 'firstTeam'}
-                            onPress={ () => handleSelectTeam('firstTeam')}
-                        >
-                            <Text>Time A</Text>
-                        </TeamSelector>
-
-                        <TeamSelector 
-                            hasBorder={teamSelected === 'secondTeam'}
-                            onPress={() => handleSelectTeam('secondTeam')}
-                        >
-                            <Text>Time B</Text>
-                        </TeamSelector>
-                    </TeamsNames>
-
-                    <Text>{teamLength}</Text>
-                </TeamsHeader>
-                <FlatList
-                    data={team!?.participants}
-                    keyExtractor = {item => item.id}
-                    renderItem = {({item}) => (
-                        <PlayerCard 
-                            title={item.name}
-                            groupId={group!.id}
-                            team={teamSelected}
-                            participantId={item.id}
+                    <Input.Root>
+                        <Input.Input
+                            value={participantName}
+                            placeholder='Nome do participante'
+                            onChangeText={handleUpdateParticipantName}
                         />
-                    )}
-                    showsHorizontalScrollIndicator={false}
-                />
+                        <Input.RightButton
+                            onPress={handleAddNewParticipant}
+                        >
+                            <Icon/>
+                        </Input.RightButton>
+                    </Input.Root>
+                    {
+                        showError &&
+                        <ErrorMessage error='nome não pode ficar vazio'/>
+                    }
                 
 
+                    <TeamsHeader>
+                        <TeamsNames>
+                            <TeamSelector 
+                                hasBorder={teamSelected === 'firstTeam'}
+                                onPress={ () => handleSelectTeam('firstTeam')}
+                            >
+                                <Text>Time A</Text>
+                            </TeamSelector>
 
-            </PlayersContent>
-        </PlayersContainer>
+                            <TeamSelector 
+                                hasBorder={teamSelected === 'secondTeam'}
+                                onPress={() => handleSelectTeam('secondTeam')}
+                            >
+                                <Text>Time B</Text>
+                            </TeamSelector>
+                        </TeamsNames>
+
+                        <Text>{teamLength}</Text>
+                    </TeamsHeader>
+                    <FlatList
+                        data={team!?.participants}
+                        keyExtractor = {item => item.id}
+                        renderItem = {({item}) => (
+                            <PlayerCard 
+                                title={item.name}
+                                groupId={group!.id}
+                                team={teamSelected}
+                                participantId={item.id}
+                            />
+                        )}
+                        showsHorizontalScrollIndicator={false}
+                    />
+                    
+
+
+                </PlayersContent>
+            </PlayersContainer>
+
+        </TouchableWithoutFeedback>
     )
 }

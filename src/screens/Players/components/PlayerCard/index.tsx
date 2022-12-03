@@ -1,6 +1,7 @@
 import { Text } from "@components/Text";
-import { teamType } from "@context/GroupContext";
 import { useGroup } from "@hooks/useGrups";
+import { teamType } from "@reduce/GroupsReducer/action";
+
 import {UserIcon,PlayerCardContainer,DeleteButton,DeleteIcon, DangerArea} from './styles'
 
 interface PlayerCardProps {
@@ -12,7 +13,6 @@ interface PlayerCardProps {
 export function PlayerCard({title,team, groupId, participantId}: PlayerCardProps) {
     const {removeOneParticipant} = useGroup()
     function handleRemoveOneParticipant(){
-        console.log('oi')
         removeOneParticipant(groupId,team,participantId)
     }
     return (

@@ -1,25 +1,13 @@
 import uuid from 'react-native-uuid';
-import {ReactNode,createContext, useState} from 'react'
+import {ReactNode,createContext, useReducer} from 'react'
 
-interface participant {
-    id: string,
-    name: string
-}
-
-interface groupProps {
-    id: string,
-    name: string,
-    firstTeam: {
-        id: string,
-        participants: participant[] | []
-    }
-    secondTeam: {
-        id: string,
-        participants: participant[] | []
-    }
-}
-
-export type teamType = 'firstTeam' | 'secondTeam'
+import { groupProps, reducer } from '@reduce/GroupsReducer';
+import { 
+    teamType, 
+    createNewGroupAction, 
+    addNewParticipantAction, 
+    removeOneParticipantAction,  
+} from '@reduce/GroupsReducer/action';
 
 interface GroupContextProviderProps {
     children: ReactNode
@@ -35,110 +23,35 @@ interface GroupContextType  {
 export const GroupContext = createContext({} as GroupContextType)
 
 export function GroupContextProvider({children}: GroupContextProviderProps){
-    const [groups,setGroups] = useState<groupProps[]>([])
+    
+    const [groups, dispatch] =  useReducer(reducer, [])
 
     function createNewGroup(groupName: string){
-        const newGroupId = uuid.v4() as string
+        const groupId = uuid.v4() as string
 
-        const newGroup : groupProps = {
-            id: newGroupId,
-            name: groupName,
-            firstTeam: {
-                id: uuid.v4() as string,
-                participants: []
-            },
-            secondTeam: {
-                id: uuid.v4() as string,
-                participants: []
-            }
+        dispatch(createNewGroupAction(
+            groupId,
+            groupName
+        ))
 
-        }
-        setGroups((state) => [newGroup, ...state])
-
-        return newGroupId
+        return groupId
     }
 
     function addNewParticipant(groupId: string, team: teamType, participantName: string){
-        const newParticipant: participant = {
-            id: uuid.v4() as string,
-            name: participantName,
-        }
-        const groupsUpdated = groups.map(group => {
-            if (group.id === groupId) {
-                if(team === 'firstTeam'){
-                    const firstTeamWithMoreOneParticipant = {
-                        ...group.firstTeam,
-                        participants: [ newParticipant, ...group.firstTeam.participants]
-                    }
-                    const groupUpdated: groupProps = {
-                        ...group,
-                        firstTeam: firstTeamWithMoreOneParticipant
-                    }
 
-                    return groupUpdated
-                }
-                else{
-                    const secondTeamWithMoreOneParticipant = {
-                        ...group.secondTeam,
-                        participants: [ newParticipant, ...group.secondTeam.participants]
-                    }
-                    const groupUpdated: groupProps = {
-                        ...group,
-                        secondTeam: secondTeamWithMoreOneParticipant
-                    }
-
-                    return groupUpdated
-                }
-            }
-
-            return group
-        })
-
-        setGroups(groupsUpdated)
-
-        
+        dispatch(addNewParticipantAction(
+            groupId,
+            team,
+            participantName
+        ))   
     }
 
     function removeOneParticipant(groupId: string, team: teamType,participantId: string){
-        const groupsUpdated = groups.map(group => {
-            if (group.id === groupId) {
-                if(team === 'firstTeam'){
-                    const partcipantsWithoutOne = group.firstTeam.participants.filter(participant => {
-                        return participant.id !== participantId
-                    })
-                    console.log(partcipantsWithoutOne)
-                    const firstTeamUpdated = {
-                        ...group.firstTeam,
-                        participants: partcipantsWithoutOne
-                    }
-                    const groupUpdated: groupProps = {
-                        ...group,
-                        firstTeam: firstTeamUpdated
-                    }
-
-                    return groupUpdated
-                }
-                else{
-                    const partcipantsWithoutOne = group.secondTeam.participants.filter(participant => {
-                        return participant.id !== participantId
-                    })
-                    const secondTeamUpdated = {
-                        ...group.secondTeam,
-                        participants: partcipantsWithoutOne
-                    }
-                    const groupUpdated: groupProps = {
-                        ...group,
-                        secondTeam: secondTeamUpdated
-                    }
-
-                    return groupUpdated
-                }
-            }
-
-            return group
-        })
-      
-        setGroups(groupsUpdated)
+        dispatch(removeOneParticipantAction(
+            groupId,
+            team,
+            participantId
+        ))
     }
 
     return (
