@@ -15,6 +15,7 @@ export const PlayersContainer = styled(SafeAreaView)`
 `
 
 export const PlayersContent = styled.View`
+    flex: 1
 `
 
 
@@ -51,6 +52,10 @@ export const Text = styled(Heading)`
 export const ErrorMessage = styled(TextComponent)`
     color: ${( {theme: {colors}}) => colors.danger[700]};
     margin-top: 8px;
+`
+
+export const Footer  = styled.View`
+    margin-top: auto
 `
 
 export const Icon = styled(Plus).attrs(({theme}) => ({

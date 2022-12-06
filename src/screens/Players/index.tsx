@@ -7,14 +7,17 @@ import { Header } from '@components/Header'
 import { HighLight } from '@components/HighLight'
 
 import { useGroup } from '@hooks/useGrups'
-import { StackScreensProps } from '@routes/stack.routes'
-import { teamType } from '@reduce/GroupsReducer/action';
+import { Button } from '@components/Button'
+import { ListEmpty } from '@components/ListEmpty'
 import { ErrorMessage } from '@components/ErrorMessage'
+import { teamType } from '@reduce/GroupsReducer/action'
+import { StackScreensProps } from '@routes/stack.routes'
 import { PlayerCard } from '@screens/Players/components/PlayerCard'
 
 import {
     Text,
     Icon,
+    Footer,
     TeamsNames,
     TeamsHeader, 
     TeamSelector,
@@ -23,12 +26,13 @@ import {
 } from './styles'
 
 
+
 export function Players({navigation,route}:NativeStackScreenProps<StackScreensProps,'Players'>){
     const [teamSelected, setTeamSelected] = useState<teamType>('firstTeam')
     const [participantName, setParticipantName] = useState('')
     const [showError, setShowError] = useState(false)
 
-    const {groups,addNewParticipant} = useGroup()
+    const {groups,addNewParticipant,removeOneGroup} = useGroup()
 
     const group = groups.find(group => group.id === route.params.id)
 
@@ -60,7 +64,12 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
         setParticipantName('')
     }
 
-    const teamLength = String(team?.participants.length)
+    function handleRemoveOneGroup(){
+        removeOneGroup(group!.id)
+        navigation.navigate('Group')
+    }
+
+    const teamLength = team?.participants.length as number
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <PlayersContainer>
@@ -109,7 +118,7 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
                             </TeamSelector>
                         </TeamsNames>
 
-                        <Text>{teamLength}</Text>
+                        <Text>{String(teamLength)}</Text>
                     </TeamsHeader>
                     <FlatList
                         data={team!?.participants}
@@ -122,11 +131,26 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
                                 participantId={item.id}
                             />
                         )}
+                        style={{marginBottom: 20}}
                         showsHorizontalScrollIndicator={false}
+                        showsVerticalScrollIndicator= {false}
+                        contentContainerStyle={teamLength === 0 && {
+                            flex: 1
+                        }}
+                        ListEmptyComponent = {
+                            <ListEmpty
+                                message='Que tal cadastrar a primeira turma'
+                            />
+                        }
+
                     />
-                    
-
-
+                    <Footer>
+                        <Button 
+                            onPress={handleRemoveOneGroup}
+                            isDangerButton
+                            title='remover '
+                        />
+                    </Footer>
                 </PlayersContent>
             </PlayersContainer>
 

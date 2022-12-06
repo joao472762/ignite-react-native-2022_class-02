@@ -1,4 +1,5 @@
 import uuid from 'react-native-uuid';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { actionProps, ActionTypes } from './action';
 
@@ -20,13 +21,26 @@ export interface groupProps {
     }
 }
 
-export function reducer(state: groupProps[],action: actionProps){
+export interface groupsStateType  {
+    groups: groupProps[],
+    appIsLoading: boolean
+}
+
+export function reducer(state: groupsStateType,action: actionProps){
+
+    async function saveGroupsInStorage (groups: groupProps[]) {
+        const dataKey = "@igniteTeams:groups"
+        const groupsToStorage = JSON.stringify(groups)
+        await AsyncStorage.setItem(dataKey, groupsToStorage)
+        
+    }
+
     switch(action.type) {
         case ActionTypes.CREATE_NEW_GROUP : {
             const {groupName, groupId} = action.payload
         
             const newGroup : groupProps = {
-                id: groupId ,
+                id: groupId as string ,
                 name: groupName as string,
                 firstTeam: {
                     id: uuid.v4() as string,
@@ -38,8 +52,14 @@ export function reducer(state: groupProps[],action: actionProps){
                 }
         
             }
-        
-            return [...state,newGroup]
+            const groupsWithMoreOneGroup = [...state.groups,newGroup]
+
+            const groupsStateUpdated: groupsStateType = {
+                ...state,
+                groups: groupsWithMoreOneGroup
+                
+            }
+            return groupsStateUpdated
             
         }
 
@@ -50,7 +70,7 @@ export function reducer(state: groupProps[],action: actionProps){
                 id: uuid.v4() as string,
                 name: participantName as string,
             }
-            const groupsUpdated: groupProps[] = state.map(group => {
+            const groupsUpdated: groupProps[] = state.groups.map(group => {
                 if (group.id === groupId) {
                     if(team === 'firstTeam'){
                         const firstTeamWithMoreOneParticipant = {
@@ -80,15 +100,22 @@ export function reducer(state: groupProps[],action: actionProps){
         
                 return group
             })
-        
-            return groupsUpdated
+            saveGroupsInStorage(groupsUpdated)
+
+            const groupsStateUpdated: groupsStateType = {
+                ...state,
+                groups: groupsUpdated
+                
+            }
+          
+            return groupsStateUpdated
 
         }
 
         case ActionTypes.REMOVE_ONE_PARTICIPANT : {
             const {groupId,team,participantId} = action.payload
 
-            const groupsUpdated: groupProps[] = state.map(group => {
+            const groupsUpdated: groupProps[] = state.groups.map(group => {
                 if (group.id === groupId) {
                     if(team === 'firstTeam'){
                         const partcipantsWithoutOne = group.firstTeam.participants.filter(participant => {
@@ -126,11 +153,48 @@ export function reducer(state: groupProps[],action: actionProps){
                 return group
                
             })
-           
-            return groupsUpdated
+            saveGroupsInStorage(groupsUpdated)
+
+            const groupsStateUpdated: groupsStateType = {
+                ...state,
+                groups: groupsUpdated
+                
+            }
+          
+            return groupsStateUpdated
+            
 
 
         }
+        case ActionTypes.UPADTE_GROUPS : {
+            const {groups} = action.payload
+            if(groups){
+                const groupsState: groupsStateType = {
+                    appIsLoading: false,
+                    groups: groups
+                }
+                return groupsState
+            }
+            return state
+        }
+
+        case ActionTypes.REMOVE_ONE_GROUP : {
+            const {groupId} = action.payload
+            const groupsWithoutOneGroup   = state.groups.filter(group => group.id !== groupId)
+
+            saveGroupsInStorage(groupsWithoutOneGroup)
+
+            const groupStateUpdated: groupsStateType = {
+                ...state,
+                groups: groupsWithoutOneGroup
+            }
+
+            return groupStateUpdated
+        }
+
+        default : return state
+        
+     
     }
 
 }
