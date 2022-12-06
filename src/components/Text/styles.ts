@@ -1,8 +1,11 @@
 import styled, {css} from "styled-components/native";
 
+export type textTypeStyleProps = 'sm' | 'md'
+
 interface textProps {
-    fontSize: 'sm' | 'md'
+    fontSize: textTypeStyleProps
 }
+
 export const TextComponent = styled.Text<textProps>`
     ${({fontSize, theme: {colors, fonts}}) => css`
         font-size: ${

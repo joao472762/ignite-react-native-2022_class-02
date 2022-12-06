@@ -1,10 +1,10 @@
 import styled from "styled-components/native";
 import { CaretLeft } from 'phosphor-react-native'
 
-interface HeaderContainerProps  {
+interface HeaderContainerTypeStyleProps  {
     hasLeftIndicator?: boolean
 }
-export const HeaderContainer =  styled.View<HeaderContainerProps>`
+export const HeaderContainer =  styled.View<HeaderContainerTypeStyleProps>`
     width: 100%;
     flex-direction: row;
     align-items: center;

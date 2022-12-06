@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Heading } from "@components/Heading";
 import {Text as TextComponent} from '@components/Text'
 
-interface TeamSelectorProps {
+interface TeamSelectorTypeStyleProps {
     hasBorder?: boolean;
 }
 export const PlayersContainer = styled(SafeAreaView)`
@@ -33,7 +33,7 @@ export const TeamsNames = styled.View`
     flex-direction: row;
 
 `
-export const TeamSelector = styled.TouchableOpacity<TeamSelectorProps>`
+export const TeamSelector = styled.TouchableOpacity<TeamSelectorTypeStyleProps>`
     padding: 8px 12px;
     border-radius: 4px;
     margin-right: 8px;
@@ -46,6 +46,7 @@ export const TeamSelector = styled.TouchableOpacity<TeamSelectorProps>`
 `
 
 export const Text = styled(Heading)`
+    text-transform: uppercase;
     font-size:  ${( {theme: {fonts}}) => fonts.size.sm}px;
 `
 

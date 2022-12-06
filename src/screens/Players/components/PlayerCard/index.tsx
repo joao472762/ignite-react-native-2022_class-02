@@ -18,14 +18,13 @@ export function PlayerCard({title,team, groupId, participantId}: PlayerCardProps
     return (
         <PlayerCardContainer>
             <UserIcon/>
-            <Text>{title}</Text>
-            <DangerArea>
-                <DeleteButton
-                    onPress={handleRemoveOneParticipant}
-                >
-                    <DeleteIcon/>
-                </DeleteButton>
-            </DangerArea>
+            <Text style={{flex: 1}}>{title}</Text>
+            <DeleteButton
+                onPress={handleRemoveOneParticipant}
+            >
+                <DeleteIcon/>
+            </DeleteButton>
+        
         </PlayerCardContainer>
     )
 }

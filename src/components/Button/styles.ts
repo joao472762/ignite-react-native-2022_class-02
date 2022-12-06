@@ -1,7 +1,10 @@
 import styled from "styled-components/native";
 
+
+export type ButtonTypeStyleProps = boolean
+
 interface ButtonProps {
-    isDangerButton: boolean
+    isDangerButton: ButtonTypeStyleProps
 }
 
 export const ButtonContainer = styled.TouchableOpacity<ButtonProps>`

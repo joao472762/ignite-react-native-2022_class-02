@@ -1,7 +1,10 @@
 import styled, {css} from "styled-components/native";
 
+
+export type HeadingTypeStyleProps = 'lg' | 'xl'
+
 interface HeadingProps {
-    fontSize: 'lg' | 'xl'
+    fontSize: HeadingTypeStyleProps
 }
 export const HeadingComponent = styled.Text<HeadingProps>`
     ${({fontSize,theme: {colors,fonts,}}) => css`

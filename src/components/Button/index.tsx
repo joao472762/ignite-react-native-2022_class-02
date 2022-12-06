@@ -1,4 +1,4 @@
-import { ButtonContainer } from './styles'
+import { ButtonContainer, ButtonTypeStyleProps } from './styles'
 import { Heading } from '@components/Heading'
 
 import { useTheme } from 'styled-components'
@@ -6,7 +6,7 @@ import { TouchableOpacityProps } from 'react-native'
 
 
 interface ButtonProps extends TouchableOpacityProps {
-    isDangerButton?: boolean,
+    isDangerButton?: ButtonTypeStyleProps,
     title: string,
 }
 

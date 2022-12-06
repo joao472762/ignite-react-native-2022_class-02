@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import { FlatList, Keyboard, TouchableWithoutFeedback } from 'react-native'
+import { useRef, useState } from 'react'
 import {NativeStackScreenProps} from '@react-navigation/native-stack'
+import { FlatList, Keyboard, TouchableWithoutFeedback } from 'react-native'
 
 import { Input } from '@components/Input'
 import { Header } from '@components/Header'
@@ -12,7 +12,10 @@ import { ListEmpty } from '@components/ListEmpty'
 import { ErrorMessage } from '@components/ErrorMessage'
 import { teamType } from '@reduce/GroupsReducer/action'
 import { StackScreensProps } from '@routes/stack.routes'
+import BottomSheet, {BottomSheetModalProps} from '@gorhom/bottom-sheet'
+
 import { PlayerCard } from '@screens/Players/components/PlayerCard'
+
 
 import {
     Text,
@@ -24,6 +27,8 @@ import {
     PlayersContent,
     PlayersContainer,
 } from './styles'
+import { BottomModal } from './components/BottomModal'
+import { useTheme } from 'styled-components'
 
 
 
@@ -41,7 +46,6 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
         : group?.secondTeam
 
     
-
     function handleSelectTeam(team: teamType){
         setTeamSelected(team)
     }
@@ -50,12 +54,17 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
         navigation.goBack()
     }
 
+
     function handleUpdateParticipantName(name: string){
         setParticipantName(name)
         setShowError(false)
+        closeModal()
+        
     }
 
     function handleAddNewParticipant(){
+        closeModal()
+        Keyboard.dismiss()
         if(!participantName.trim().length){
             setShowError(true)
             return
@@ -68,11 +77,26 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
         removeOneGroup(group!.id)
         navigation.navigate('Group')
     }
+    const bottomSheetRef = useRef<BottomSheet | null>(null)
+
+    function showModal(){
+        bottomSheetRef.current?.expand()
+    }
+
+    function closeModal(){
+        bottomSheetRef.current?.close()
+        
+    }
+
+    const {colors} = useTheme()
 
     const teamLength = team?.participants.length as number
     return (
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <PlayersContainer>
+        <TouchableWithoutFeedback onPress={() => {
+            Keyboard.dismiss()
+            closeModal()
+        }}>
+            <PlayersContainer >
                 <Header
                     hasLeftIndicator
                     navigateToPreviousScreen={navigateToPreviousScreen}
@@ -85,8 +109,10 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
 
                     <Input.Root>
                         <Input.Input
+                            autoCorrect= {false}
                             value={participantName}
                             placeholder='Nome do participante'
+                            onFocus={closeModal}
                             onChangeText={handleUpdateParticipantName}
                         />
                         <Input.RightButton
@@ -99,9 +125,9 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
                         showError &&
                         <ErrorMessage error='nome não pode ficar vazio'/>
                     }
-                
-
+                    
                     <TeamsHeader>
+                        
                         <TeamsNames>
                             <TeamSelector 
                                 hasBorder={teamSelected === 'firstTeam'}
@@ -134,9 +160,11 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
                         style={{marginBottom: 20}}
                         showsHorizontalScrollIndicator={false}
                         showsVerticalScrollIndicator= {false}
-                        contentContainerStyle={teamLength === 0 && {
-                            flex: 1
-                        }}
+                        contentContainerStyle={
+                            teamLength === 0 
+                            ? {flex: 1}
+                            : {paddingBottom: 80}
+                        }
                         ListEmptyComponent = {
                             <ListEmpty
                                 message='Que tal cadastrar a primeira turma'
@@ -146,13 +174,20 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
                     />
                     <Footer>
                         <Button 
-                            onPress={handleRemoveOneGroup}
+                            onPress={showModal}
                             isDangerButton
-                            title='remover '
+                            title='Remover turma'
                         />
                     </Footer>
                 </PlayersContent>
+                <BottomModal
+                    ref={bottomSheetRef}
+                    closeBottomModal={closeModal}
+                    handleRemoveOneGroup={handleRemoveOneGroup}
+                    barIdicatorColor={colors.gray[500]}
+                />
             </PlayersContainer>
+            
 
         </TouchableWithoutFeedback>
     )

@@ -1,10 +1,10 @@
 import { Text, TextProps} from "react-native";
-import {HeadingComponent} from './styles'
+import {HeadingComponent, HeadingTypeStyleProps} from './styles'
 
 
 interface textProps  extends TextProps {
     children: string,
-    fontSize?: 'lg' | 'xl',
+    fontSize?: HeadingTypeStyleProps
 }
 
 
