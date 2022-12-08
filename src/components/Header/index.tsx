@@ -3,20 +3,20 @@ import {GoBackButton, HeaderContainer, Icon,Logo} from './styles'
 
 interface HederProps {
     hasLeftIndicator?: boolean,
-    navigateToPreviousScreen?: () => void
+    changeScreen?: () => void
 }
 
-export function Header({hasLeftIndicator=false,navigateToPreviousScreen}: HederProps){
-    function handleNavigateToPreviousScreen(){
-        if(navigateToPreviousScreen !== undefined){
-            navigateToPreviousScreen()
+export function Header({hasLeftIndicator=false,changeScreen}: HederProps){
+    function handleChangeScreen(){
+        if(changeScreen !== undefined){
+            changeScreen()
         }
     }
     return (
         <HeaderContainer hasLeftIndicator={hasLeftIndicator}>
             {hasLeftIndicator && (
                 <GoBackButton
-                    onPress={handleNavigateToPreviousScreen}
+                    onPress={handleChangeScreen}
                 >
                     <Icon/>
                 </GoBackButton>

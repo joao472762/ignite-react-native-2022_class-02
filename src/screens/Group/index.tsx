@@ -6,7 +6,7 @@ import { Button } from '@components/Button';
 import { Header } from '@components/Header';
 import { useGroup } from '@hooks/useGrups';
 import { HighLight } from '@components/HighLight';
-import { GroupCard } from '@components/GroupCard';
+import { GroupCard } from '@screens/Group/components/GroupCard';
 import { ListEmpty } from '@components/ListEmpty';
 import { StackScreensProps } from '@routes/stack.routes';
 
@@ -22,6 +22,7 @@ export function Group({navigation:{navigate}}:NativeStackScreenProps<StackScreen
     function navigateToPlayersScreen(id: string){
         navigate('Players',{id})
     }
+
 
     return (
         <GroupContainer>

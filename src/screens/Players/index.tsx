@@ -1,21 +1,21 @@
 import { useRef, useState } from 'react'
-import {NativeStackScreenProps} from '@react-navigation/native-stack'
-import { FlatList, Keyboard, TouchableWithoutFeedback } from 'react-native'
+import { useTheme } from 'styled-components'
+import BottomSheet from '@gorhom/bottom-sheet'
+import { FlatList, Keyboard } from 'react-native'
+import {NativeStackScreenProps } from '@react-navigation/native-stack'
 
 import { Input } from '@components/Input'
 import { Header } from '@components/Header'
-import { HighLight } from '@components/HighLight'
-
-import { useGroup } from '@hooks/useGrups'
 import { Button } from '@components/Button'
 import { ListEmpty } from '@components/ListEmpty'
+import { HighLight } from '@components/HighLight'
+import { PlayerCard } from './components/PlayerCard'
+import { BottomModal } from './components/BottomModal'
 import { ErrorMessage } from '@components/ErrorMessage'
+
+import { useGroup } from '@hooks/useGrups'
 import { teamType } from '@reduce/GroupsReducer/action'
 import { StackScreensProps } from '@routes/stack.routes'
-import BottomSheet, {BottomSheetModalProps} from '@gorhom/bottom-sheet'
-
-import { PlayerCard } from '@screens/Players/components/PlayerCard'
-
 
 import {
     Text,
@@ -27,15 +27,13 @@ import {
     PlayersContent,
     PlayersContainer,
 } from './styles'
-import { BottomModal } from './components/BottomModal'
-import { useTheme } from 'styled-components'
-
 
 
 export function Players({navigation,route}:NativeStackScreenProps<StackScreensProps,'Players'>){
-    const [teamSelected, setTeamSelected] = useState<teamType>('firstTeam')
-    const [participantName, setParticipantName] = useState('')
+
     const [showError, setShowError] = useState(false)
+    const [participantName, setParticipantName] = useState('')
+    const [teamSelected, setTeamSelected] = useState<teamType>('firstTeam')
 
     const {groups,addNewParticipant,removeOneGroup} = useGroup()
 
@@ -45,21 +43,29 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
         ? group?.firstTeam
         : group?.secondTeam
 
-    
+    const bottomSheetRef = useRef<BottomSheet | null>(null)
+
+    function showModal(){
+        bottomSheetRef.current?.expand()
+    }
+
+    function closeModal(){
+        bottomSheetRef.current?.close()
+        
+    }
+
     function handleSelectTeam(team: teamType){
         setTeamSelected(team)
     }
 
-    function navigateToPreviousScreen(){
-        navigation.goBack()
+    function navigateToGroupScreen(){
+        navigation.navigate('Group')
     }
-
 
     function handleUpdateParticipantName(name: string){
         setParticipantName(name)
         setShowError(false)
-        closeModal()
-        
+        closeModal()     
     }
 
     function handleAddNewParticipant(){
@@ -77,29 +83,17 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
         removeOneGroup(group!.id)
         navigation.navigate('Group')
     }
-    const bottomSheetRef = useRef<BottomSheet | null>(null)
-
-    function showModal(){
-        bottomSheetRef.current?.expand()
-    }
-
-    function closeModal(){
-        bottomSheetRef.current?.close()
-        
-    }
+   
 
     const {colors} = useTheme()
 
     const teamLength = team?.participants.length as number
     return (
-        <TouchableWithoutFeedback onPress={() => {
-            Keyboard.dismiss()
-            closeModal()
-        }}>
+        
             <PlayersContainer >
                 <Header
                     hasLeftIndicator
-                    navigateToPreviousScreen={navigateToPreviousScreen}
+                    changeScreen={navigateToGroupScreen}
                 />
                 <PlayersContent>
                     <HighLight
@@ -151,20 +145,22 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
                         keyExtractor = {item => item.id}
                         renderItem = {({item}) => (
                             <PlayerCard 
-                                title={item.name}
-                                groupId={group!.id}
-                                team={teamSelected}
-                                participantId={item.id}
+                            name={item.name}
+                            groupId={group!.id}
+                            team={teamSelected}
+                            participantId={item.id}
                             />
+                           
                         )}
-                        style={{marginBottom: 20}}
+                        
                         showsHorizontalScrollIndicator={false}
                         showsVerticalScrollIndicator= {false}
-                        contentContainerStyle={
-                            teamLength === 0 
-                            ? {flex: 1}
-                            : {paddingBottom: 80}
-                        }
+                        style={{marginBottom: 20}}
+                        contentContainerStyle={[
+                            teamLength  === 0
+                            ?{flex: 1}
+                            :{ paddingBottom: 20}
+                        ]}
                         ListEmptyComponent = {
                             <ListEmpty
                                 message='Que tal cadastrar a primeira turma'
@@ -189,6 +185,6 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
             </PlayersContainer>
             
 
-        </TouchableWithoutFeedback>
+       
     )
 }

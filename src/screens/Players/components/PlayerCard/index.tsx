@@ -1,24 +1,43 @@
+import { Alert } from "react-native";
+
 import { Text } from "@components/Text";
 import { useGroup } from "@hooks/useGrups";
 import { teamType } from "@reduce/GroupsReducer/action";
 
-import {UserIcon,PlayerCardContainer,DeleteButton,DeleteIcon, DangerArea} from './styles'
+import {UserIcon,PlayerCardContainer,DeleteButton,DeleteIcon} from './styles'
 
 interface PlayerCardProps {
-    title: string,
+    name: string,
     groupId: string,
     team: teamType,
     participantId: string,
 }
-export function PlayerCard({title,team, groupId, participantId}: PlayerCardProps) {
+export function PlayerCard({name,team, groupId, participantId}: PlayerCardProps) {
     const {removeOneParticipant} = useGroup()
+
     function handleRemoveOneParticipant(){
-        removeOneParticipant(groupId,team,participantId)
+        Alert.alert(
+        'Remover participante?',
+        `tem certeza quer remover ${name}`
+        ,[
+            
+            {
+                text: 'sim',
+                style: 'destructive',
+                onPress: () => {removeOneParticipant(groupId,team,participantId)}
+
+            },
+            {
+                text: 'cancelar',
+                style: 'default'
+            },
+        ])
+       
     }
     return (
         <PlayerCardContainer>
             <UserIcon/>
-            <Text style={{flex: 1}}>{title}</Text>
+            <Text style={{flex: 1}}>{name}</Text>
             <DeleteButton
                 onPress={handleRemoveOneParticipant}
             >

@@ -1,5 +1,4 @@
-import { useContext, useState } from "react";
-import uuid from 'react-native-uuid';
+import { useState } from "react";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import {NativeStackScreenProps} from '@react-navigation/native-stack'
 
@@ -15,18 +14,10 @@ import {NewGroupContainer, NewGroupContent, Icon}  from './styles'
 import { ErrorMessage } from "@components/ErrorMessage";
 
 
-interface participant {
-    name: string
-}
-
-
-
 export function NewGroup({navigation}:NativeStackScreenProps<StackScreensProps,'NewGroup'>){
     const [groupName, setGroupName] = useState('')
     const {createNewGroup} = useGroup()
     const [showError, setShowError] = useState(false)
-
-
 
     function navigateToPreviousScreen(){
         navigation.goBack()
@@ -53,15 +44,12 @@ export function NewGroup({navigation}:NativeStackScreenProps<StackScreensProps,'
 
     }
 
-    
-
-    
     return(
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <NewGroupContainer>
                 <Header 
                     hasLeftIndicator
-                    navigateToPreviousScreen={navigateToPreviousScreen}
+                    changeScreen={navigateToPreviousScreen}
                 />
                 <NewGroupContent>
                     <Icon/>
