@@ -1,0 +1,1 @@
+export const GROUP_COLLETION_KEY = "@igniteTeams:groups"

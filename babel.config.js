@@ -18,6 +18,7 @@ module.exports = function(api) {
             '@utils': './src/utils',
             '@context': './src/context',
             '@hooks': './src/hooks',
+            '@config': './src/config',
             '@reduce': './src/reduce',
           }
         }

@@ -1,6 +1,6 @@
-import {ReactNode} from 'react'
+import {ReactNode,RefObject} from 'react'
 import { useTheme } from 'styled-components/native'
-import { TextInputProps,TouchableOpacityProps } from 'react-native'
+import { TextInput, TextInputProps,TouchableOpacityProps } from 'react-native'
 
 import {InputRootContainer,InputInputContainer,PlusButtonContainer} from './styles'
 
@@ -18,13 +18,17 @@ function InputRoot({children}:InputRootProps){
 }
 
 
- function InputInput(props: TextInputProps){
+interface InputInputProps extends TextInputProps{
+    InputRef?: RefObject<TextInput>
+}
+function InputInput({InputRef, ...rest}: InputInputProps){
     const {colors:{gray}} = useTheme()
     return (
 
-        <InputInputContainer  
+        <InputInputContainer 
+            ref={InputRef}
             placeholderTextColor={gray[300]}
-            {...props}
+            {...rest}
         />
     )
 }

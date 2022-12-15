@@ -33,6 +33,9 @@
       ],
       "@reduce/*": [
         "./src/reduce/*"
+      ],
+      "@config/*": [
+        "./src/config/*"
       ]
     }
   }

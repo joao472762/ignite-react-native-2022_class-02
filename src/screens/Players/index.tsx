@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react'
+import { useRef, useState} from 'react'
 import { useTheme } from 'styled-components'
 import BottomSheet from '@gorhom/bottom-sheet'
-import { FlatList, Keyboard } from 'react-native'
+import { FlatList, Keyboard , TextInput} from 'react-native'
 import {NativeStackScreenProps } from '@react-navigation/native-stack'
 
 import { Input } from '@components/Input'
@@ -61,10 +61,12 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
     function navigateToGroupScreen(){
         navigation.navigate('Group')
     }
-
+    
+    const InputRef = useRef<TextInput | null>(null)
     function handleUpdateParticipantName(name: string){
         setParticipantName(name)
         setShowError(false)
+        
         closeModal()     
     }
 
@@ -77,6 +79,7 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
         }
         addNewParticipant(group!?.id,teamSelected,participantName)
         setParticipantName('')
+        
     }
 
     function handleRemoveOneGroup(){
@@ -103,6 +106,9 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
 
                     <Input.Root>
                         <Input.Input
+                            InputRef={InputRef}
+                            onSubmitEditing={handleAddNewParticipant}
+                            returnKeyType='done'
                             autoCorrect= {false}
                             value={participantName}
                             placeholder='Nome do participante'
@@ -111,7 +117,7 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
                         />
                         <Input.RightButton
                             onPress={handleAddNewParticipant}
-                        >
+                        > 
                             <Icon/>
                         </Input.RightButton>
                     </Input.Root>
