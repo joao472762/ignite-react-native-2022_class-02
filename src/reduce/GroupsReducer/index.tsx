@@ -1,38 +1,31 @@
 import uuid from 'react-native-uuid';
+import { GROUP_COLLETION_KEY } from '@config/storageKey';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { actionProps, ActionTypes } from './action';
 
-interface participant {
+interface participantProps {
     id: string,
-    name: string
+    name: string,
+    team: string
 }
 
 export interface groupProps {
     id: string,
     name: string,
-    firstTeam: {
-        id: string,
-        participants: participant[] | []
-    }
-    secondTeam: {
-        id: string,
-        participants: participant[] | []
-    }
+    participants: participantProps[] | []
 }
 
-export interface groupsStateType  {
-    groups: groupProps[],
-    appIsLoading: boolean
-}
-
-export function reducer(state: groupsStateType,action: actionProps){
-
+export function reducer(state: groupProps[] ,action: actionProps){
+   
     async function saveGroupsInStorage (groups: groupProps[]) {
-        const dataKey = "@igniteTeams:groups"
-        const groupsToStorage = JSON.stringify(groups)
-        await AsyncStorage.setItem(dataKey, groupsToStorage)
-        
+        try {
+            const dataKey = GROUP_COLLETION_KEY
+            const groupsToStorage = JSON.stringify(groups)
+            await AsyncStorage.setItem(dataKey, groupsToStorage)
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     switch(action.type) {
@@ -42,112 +35,62 @@ export function reducer(state: groupsStateType,action: actionProps){
             const newGroup : groupProps = {
                 id: groupId as string ,
                 name: groupName as string,
-                firstTeam: {
-                    id: uuid.v4() as string,
-                    participants: []
-                },
-                secondTeam: {
-                    id: uuid.v4() as string,
-                    participants: []
-                }
+                participants: []
         
             }
-            const groupsWithMoreOneGroup = [...state.groups,newGroup]
 
-            const groupsStateUpdated: groupsStateType = {
-                ...state,
-                groups: groupsWithMoreOneGroup
-                
-            }
-            return groupsStateUpdated
+            const groupsWithMoreOneGroup = [...state,newGroup]
+            saveGroupsInStorage(groupsWithMoreOneGroup)
+
+            return groupsWithMoreOneGroup
             
         }
 
         case ActionTypes.ADD_NEW_PARTICIPANT : {
             const {participantName,groupId,team} = action.payload
         
-            const newParticipant: participant = {
+            const newParticipant: participantProps = {
                 id: uuid.v4() as string,
                 name: participantName as string,
+                team: team  as string
             }
-            const groupsUpdated: groupProps[] = state.groups.map(group => {
+
+            const groupsUpdated: groupProps[] = state.map(group => {
+
                 if (group.id === groupId) {
-                    if(team === 'firstTeam'){
-                        const firstTeamWithMoreOneParticipant = {
-                            ...group.firstTeam,
-                            participants: [ newParticipant, ...group.firstTeam.participants]
-                        }
-                        const groupUpdated: groupProps = {
-                            ...group,
-                            firstTeam: firstTeamWithMoreOneParticipant
-                        }
-        
-                        return groupUpdated
+                    const groupWithMoreOneParticipant: groupProps = {
+                        ...group,
+                        participants: [newParticipant, ...group.participants]
+
                     }
-                    else{
-                        const secondTeamWithMoreOneParticipant = {
-                            ...group.secondTeam,
-                            participants: [ newParticipant, ...group.secondTeam.participants]
-                        }
-                        const groupUpdated: groupProps = {
-                            ...group,
-                            secondTeam: secondTeamWithMoreOneParticipant
-                        }
-        
-                        return groupUpdated
-                    }
+                    return groupWithMoreOneParticipant
                 }
         
                 return group
             })
+            
             saveGroupsInStorage(groupsUpdated)
 
-            const groupsStateUpdated: groupsStateType = {
-                ...state,
-                groups: groupsUpdated
-                
-            }
-          
-            return groupsStateUpdated
+            return groupsUpdated
 
         }
 
         case ActionTypes.REMOVE_ONE_PARTICIPANT : {
-            const {groupId,team,participantId} = action.payload
+            const {groupId,participantId} = action.payload
 
-            const groupsUpdated: groupProps[] = state.groups.map(group => {
+            const groupsUpdated: groupProps[] = state.map(group => {
                 if (group.id === groupId) {
-                    if(team === 'firstTeam'){
-                        const partcipantsWithoutOne = group.firstTeam.participants.filter(participant => {
-                            return participant.id !== participantId
-                        })
-                        
-                        const firstTeamUpdated = {
-                            ...group.firstTeam,
-                            participants: partcipantsWithoutOne
-                        }
-                        const groupUpdated: groupProps = {
-                            ...group,
-                            firstTeam: firstTeamUpdated
-                        }
-        
-                        return groupUpdated
+                    const participantsWithParticipantRemoved = group.participants.filter(participant => {
+                        return participant.id !== participantId
+                    })
+
+                    const groupWithParticipantUpdated: groupProps = {
+                        ...group,
+                        participants: participantsWithParticipantRemoved
                     }
-                    else{
-                        const partcipantsWithoutOne = group.secondTeam.participants.filter(participant => {
-                            return participant.id !== participantId
-                        })
-                        const secondTeamUpdated = {
-                            ...group.secondTeam,
-                            participants: partcipantsWithoutOne
-                        }
-                        const groupUpdated: groupProps = {
-                            ...group,
-                            secondTeam: secondTeamUpdated
-                        }
-        
-                        return groupUpdated
-                    }
+
+                    return groupWithParticipantUpdated
+
                 }
                 
                 return group
@@ -155,46 +98,29 @@ export function reducer(state: groupsStateType,action: actionProps){
             })
             saveGroupsInStorage(groupsUpdated)
 
-            const groupsStateUpdated: groupsStateType = {
-                ...state,
-                groups: groupsUpdated
-                
-            }
-          
-            return groupsStateUpdated
-            
-
-
+            return groupsUpdated
         }
+
         case ActionTypes.UPADTE_GROUPS : {
             const {groups} = action.payload
+
             if(groups){
-                const groupsState: groupsStateType = {
-                    appIsLoading: false,
-                    groups: groups
-                }
-                return groupsState
+                return groups
             }
             return state
         }
 
         case ActionTypes.REMOVE_ONE_GROUP : {
             const {groupId} = action.payload
-            const groupsWithoutOneGroup   = state.groups.filter(group => group.id !== groupId)
+            const groupsWithoutOneGroup   = state.filter(group => group.id !== groupId)
 
             saveGroupsInStorage(groupsWithoutOneGroup)
 
-            const groupStateUpdated: groupsStateType = {
-                ...state,
-                groups: groupsWithoutOneGroup
-            }
-
-            return groupStateUpdated
+            return groupsWithoutOneGroup
         }
 
         default : return state
-        
-     
+
     }
 
 }

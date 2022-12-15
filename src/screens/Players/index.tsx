@@ -14,7 +14,6 @@ import { BottomModal } from './components/BottomModal'
 import { ErrorMessage } from '@components/ErrorMessage'
 
 import { useGroup } from '@hooks/useGrups'
-import { teamType } from '@reduce/GroupsReducer/action'
 import { StackScreensProps } from '@routes/stack.routes'
 
 import {
@@ -30,31 +29,31 @@ import {
 
 
 export function Players({navigation,route}:NativeStackScreenProps<StackScreensProps,'Players'>){
-
+    
+    const {colors} = useTheme()
     const [showError, setShowError] = useState(false)
     const [participantName, setParticipantName] = useState('')
-    const [teamSelected, setTeamSelected] = useState<teamType>('firstTeam')
+    const [teamSelected, setTeamSelected] = useState('Time A')
+    
+    const InputRef = useRef<TextInput | null>(null)
+    const bottomSheetRef = useRef<BottomSheet | null>(null)
+
 
     const {groups,addNewParticipant,removeOneGroup} = useGroup()
 
     const group = groups.find(group => group.id === route.params.id)
 
-    const team = teamSelected === 'firstTeam' 
-        ? group?.firstTeam
-        : group?.secondTeam
-
-    const bottomSheetRef = useRef<BottomSheet | null>(null)
+    const teamParticipants = group!?.participants.filter(participant => participant.team === teamSelected)
 
     function showModal(){
         bottomSheetRef.current?.expand()
     }
 
-    function closeModal(){
-        bottomSheetRef.current?.close()
-        
+    function closeBottomModal(){
+        bottomSheetRef.current?.close()     
     }
 
-    function handleSelectTeam(team: teamType){
+    function handleSelectTeam(team: string){
         setTeamSelected(team)
     }
 
@@ -62,16 +61,15 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
         navigation.navigate('Group')
     }
     
-    const InputRef = useRef<TextInput | null>(null)
     function handleUpdateParticipantName(name: string){
         setParticipantName(name)
         setShowError(false)
         
-        closeModal()     
+        closeBottomModal()     
     }
 
     function handleAddNewParticipant(){
-        closeModal()
+        closeBottomModal()
         Keyboard.dismiss()
         if(!participantName.trim().length){
             setShowError(true)
@@ -87,10 +85,9 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
         navigation.navigate('Group')
     }
    
+    
 
-    const {colors} = useTheme()
-
-    const teamLength = team?.participants.length as number
+    const teamLength = teamParticipants.length
     return (
         
             <PlayersContainer >
@@ -112,7 +109,7 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
                             autoCorrect= {false}
                             value={participantName}
                             placeholder='Nome do participante'
-                            onFocus={closeModal}
+                            onFocus={closeBottomModal}
                             onChangeText={handleUpdateParticipantName}
                         />
                         <Input.RightButton
@@ -130,15 +127,15 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
                         
                         <TeamsNames>
                             <TeamSelector 
-                                hasBorder={teamSelected === 'firstTeam'}
-                                onPress={ () => handleSelectTeam('firstTeam')}
+                                hasBorder={teamSelected === 'Time A'}
+                                onPress={ () => handleSelectTeam('Time A')}
                             >
                                 <Text>Time A</Text>
                             </TeamSelector>
 
                             <TeamSelector 
-                                hasBorder={teamSelected === 'secondTeam'}
-                                onPress={() => handleSelectTeam('secondTeam')}
+                                hasBorder={teamSelected === 'Time B'}
+                                onPress={() => handleSelectTeam('Time B')}
                             >
                                 <Text>Time B</Text>
                             </TeamSelector>
@@ -147,13 +144,12 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
                         <Text>{String(teamLength)}</Text>
                     </TeamsHeader>
                     <FlatList
-                        data={team!?.participants}
+                        data={teamParticipants}
                         keyExtractor = {item => item.id}
                         renderItem = {({item}) => (
                             <PlayerCard 
                             name={item.name}
                             groupId={group!.id}
-                            team={teamSelected}
                             participantId={item.id}
                             />
                            
@@ -184,13 +180,10 @@ export function Players({navigation,route}:NativeStackScreenProps<StackScreensPr
                 </PlayersContent>
                 <BottomModal
                     ref={bottomSheetRef}
-                    closeBottomModal={closeModal}
+                    closeBottomModal={closeBottomModal}
                     handleRemoveOneGroup={handleRemoveOneGroup}
                     barIdicatorColor={colors.gray[500]}
                 />
             </PlayersContainer>
-            
-
-       
     )
 }

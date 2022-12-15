@@ -1,16 +1,16 @@
 import uuid from 'react-native-uuid';
-import {ReactNode,createContext, useReducer, useEffect} from 'react'
+import { GROUP_COLLETION_KEY } from '@config/storageKey';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {ReactNode,createContext, useReducer, useEffect, useState} from 'react'
 
 import { groupProps, reducer } from '@reduce/GroupsReducer';
 import { 
-    teamType, 
+    updateGroupsAction,
     createNewGroupAction, 
+    removeOneGroupAction,  
     addNewParticipantAction, 
     removeOneParticipantAction,
-    updateGroupsAction,
-    removeOneGroupAction,  
 } from '@reduce/GroupsReducer/action';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface GroupContextProviderProps {
     children: ReactNode
@@ -21,22 +21,17 @@ interface GroupContextType  {
     appIsLoading: boolean,
     createNewGroup: (groupName: string) => string,
     removeOneGroup: (groupId: string) => void,
-    removeOneParticipant: (groupId: string, team: teamType,participantId: string) => void,
-    addNewParticipant: (groupId: string, team: teamType, participantName: string) => void
+    removeOneParticipant: (groupId: string ,participantId: string) => void,
+    addNewParticipant: (groupId: string, team: string, participantName: string) => void
 }
 
 export const GroupContext = createContext({} as GroupContextType)
 
 export function GroupContextProvider({children}: GroupContextProviderProps){
     
-    const [gropsState , dispatch] =  useReducer(reducer, {
-        groups: [],
-        appIsLoading: true
-    })
-
-    const {appIsLoading,groups} = gropsState
-    
-
+    const [groups , dispatch] =  useReducer(reducer,[])
+    const [appIsLoading, setAppIsLoading] =  useState(true)
+   
     function createNewGroup(groupName: string){
         const groupId = uuid.v4() as string
 
@@ -48,7 +43,7 @@ export function GroupContextProvider({children}: GroupContextProviderProps){
         return groupId
     }
 
-    function addNewParticipant(groupId: string, team: teamType, participantName: string){
+    function addNewParticipant(groupId: string, team: string, participantName: string){
 
         dispatch(addNewParticipantAction(
             groupId,
@@ -57,10 +52,9 @@ export function GroupContextProvider({children}: GroupContextProviderProps){
         ))   
     }
 
-    function removeOneParticipant(groupId: string, team: teamType,participantId: string){
+    function removeOneParticipant(groupId: string,participantId: string){
         dispatch(removeOneParticipantAction(
             groupId,
-            team,
             participantId
         ))
     }
@@ -71,13 +65,23 @@ export function GroupContextProvider({children}: GroupContextProviderProps){
     }
 
     async function fetchGroups(){
-        const dataKey = "@igniteTeams:groups"
-        const response = await AsyncStorage.getItem(dataKey)
-
-        if(response){
-            const storage = JSON.parse(response)
-            dispatch(updateGroupsAction(storage))
+        setAppIsLoading(true)
+        try {
+            const dataKey = GROUP_COLLETION_KEY
+            const response = await AsyncStorage.getItem(dataKey)
+            
+            if(response){
+                const storage = JSON.parse(response)
+                dispatch(updateGroupsAction(storage))
+            }
+            
+        } catch (error) {
+            console.error(error)
         }
+        finally {
+            setAppIsLoading(false)
+        }
+
     }
 
     useEffect(() => {

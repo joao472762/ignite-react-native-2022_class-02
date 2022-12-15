@@ -2,17 +2,15 @@ import { Alert } from "react-native";
 
 import { Text } from "@components/Text";
 import { useGroup } from "@hooks/useGrups";
-import { teamType } from "@reduce/GroupsReducer/action";
 
 import {UserIcon,PlayerCardContainer,DeleteButton,DeleteIcon} from './styles'
 
 interface PlayerCardProps {
     name: string,
     groupId: string,
-    team: teamType,
     participantId: string,
 }
-export function PlayerCard({name,team, groupId, participantId}: PlayerCardProps) {
+export function PlayerCard({name, groupId, participantId}: PlayerCardProps) {
     const {removeOneParticipant} = useGroup()
 
     function handleRemoveOneParticipant(){
@@ -24,7 +22,7 @@ export function PlayerCard({name,team, groupId, participantId}: PlayerCardProps)
             {
                 text: 'sim',
                 style: 'destructive',
-                onPress: () => {removeOneParticipant(groupId,team,participantId)}
+                onPress: () => {removeOneParticipant(groupId, participantId)}
 
             },
             {

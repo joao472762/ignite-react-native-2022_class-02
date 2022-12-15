@@ -8,7 +8,6 @@ export enum ActionTypes  {
     'REMOVE_ONE_GROUP' = "REMOVE_ONE_GROUP"
 }
 
-export type teamType = 'firstTeam' | 'secondTeam'
 
 export interface actionProps {
     type: ActionTypes,
@@ -16,7 +15,7 @@ export interface actionProps {
         groupName?: string,
         groupId?: string,
         participantName?: string,
-        team?: teamType
+        team?: string
         participantId?: string,
         groups?: groupProps[],
 
@@ -37,7 +36,7 @@ export function createNewGroupAction(groupId: string, groupName: string){
     return  action
 }
 
-export function addNewParticipantAction(groupId: string, team: teamType, participantName: string){
+export function addNewParticipantAction(groupId: string, team: string, participantName: string){
     const action : actionProps = {
         type: ActionTypes.ADD_NEW_PARTICIPANT,
         payload: {
@@ -50,11 +49,10 @@ export function addNewParticipantAction(groupId: string, team: teamType, partici
     return  action
 }
 
-export function removeOneParticipantAction(groupId: string, team: teamType,participantId: string){
+export function removeOneParticipantAction(groupId: string,participantId: string){
     const action : actionProps = {
         type: ActionTypes.REMOVE_ONE_PARTICIPANT,
         payload: {
-            team,
             groupId,
             participantId,
         }
